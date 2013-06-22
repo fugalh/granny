@@ -1,5 +1,5 @@
 SRCS = Sndfile.cc
-TEST_SRCS = test/main.cc test/Sndfile.cc
+TEST_SRCS = test/main.cc test/SndfileTest.cc
 
 #CXX = clang++
 CPPFLAGS += -I/opt/local/include -g -O0
