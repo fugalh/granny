@@ -1,5 +1,5 @@
-SRCS = Sndfile.cc
-TEST_SRCS = test/main.cc test/SndfileTest.cc
+SRCS = src/Sndfile.cc
+TEST_SRCS = src/test/main.cc src/test/SndfileTest.cc
 
 #CXX = clang++
 CPPFLAGS += -I/opt/local/include -g -O0
@@ -7,13 +7,13 @@ CXXFLAGS += -std=c++11
 LDFLAGS += -L/opt/local/lib
 LDLIBS += -lsndfile -lgtest
 
-test: test/test
-	test/test
+test: tests
+	./tests
 
-test/test: $(SRCS) $(TEST_SRCS)
+tests: $(SRCS) $(TEST_SRCS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $^ -o $@
 
 clean:
-	rm -f test/test granny
+	rm -f tests granny
 
-.PHONY: test clean
+.PHONY: all test clean
