@@ -9,6 +9,7 @@
 class Sndfile {
 public:
   Sndfile(std::string const& path, int mode = SFM_READ, SF_INFO* info = nullptr);
+  ~Sndfile();
 
   std::vector<float> read();
   void write(std::vector<float> const&);
