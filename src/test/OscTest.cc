@@ -27,3 +27,8 @@ TEST(Arg, badTypeThrows) {
 
   EXPECT_THROW(a.f(), std::runtime_error);
 }
+
+TEST(Arg, timeTag) {
+  lo_timetag tt { 3, 14149 };
+  Arg a('t', tt);
+}
