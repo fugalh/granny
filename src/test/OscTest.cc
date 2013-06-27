@@ -5,21 +5,20 @@
 using namespace OSC;
 using namespace std;
 using testing::Test;
+using std::vector;
+using std::string;
 
-TEST(Arg, ctor) {
-#define CHAR(x) 'x'
-#define TEST_ARG(T, v) {\
-  Arg a(CHAR(X), (v));\
-  EXPECT_EQ(CHAR(X), a.type());\
-  EXPECT_EQ((v), a.T());\
+template <class T>
+static void testArgTypeAndValue(char t, T const& v) {
+  Arg a(t, v);
+  EXPECT_EQ(t, a.type());
+  EXPECT_EQ(v, a.value<T>());
 }
 
-  TEST_ARG(i, 42);
-  TEST_ARG(f, 3.1419f);
-  TEST_ARG(s, "foo");
-
-#undef CHAR
-#undef TEST_ARG
+TEST(Arg, typeAndValue) {
+  testArgTypeAndValue('i', 42);
+  testArgTypeAndValue('f', 3.14149f);
+  testArgTypeAndValue('s', string("foo"));
 }
 
 TEST(Arg, badTypeThrows) {
@@ -31,4 +30,13 @@ TEST(Arg, badTypeThrows) {
 TEST(Arg, timeTag) {
   lo_timetag tt { 3, 14149 };
   Arg a('t', tt);
+}
+
+TEST(Server, ctor) {
+  Server();
+  Server("12345");
+}
+
+TEST(Server, getPort) {
+  EXPECT_LT(1024, Server().getPort());
 }

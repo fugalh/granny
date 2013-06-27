@@ -5,7 +5,7 @@ HEADERS = Sndfile.hh Sndbuf.hh OSC.hh
 CPPFLAGS += -Wall -Werror -I/opt/local/include
 CXXFLAGS += -std=c++11
 LDFLAGS += -L/opt/local/lib
-LDLIBS += -lsndfile -lgtest
+LDLIBS += -lsndfile -lgtest -llo
 
 test: tests
 	./tests
