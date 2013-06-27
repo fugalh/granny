@@ -80,7 +80,7 @@ struct Address {
 
 class Server {
 public:
-  typedef std::function<void(std::string, Message)> Callback;
+  typedef std::function<int(std::string, Message)> Callback;
 
   Server(std::string port = "") {
     char const* p = nullptr;
@@ -127,8 +127,7 @@ private:
     Server* s = (Server*)user_data;
     if (s->methods_.find(path) == s->methods_.end())
       return 0;
-    s->methods_[path](std::string(path), Message(types, argv, argc, msg));
-    return 1;
+    return s->methods_[path](std::string(path), Message(types, argv, argc, msg));
   }
 
   lo_server server_;

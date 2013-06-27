@@ -9,7 +9,7 @@ void OSCEngine::run(string port)
   srv.addMethod("/event/foo", "",
                 // there's supposed to be a more direct way to do this :-P
                 [this](std::string path, OSC::Message msg) {
-                  this->event_cb(path, msg);
+                  return this->event_cb(path, msg);
                 });
 
   while (!finished)
@@ -23,7 +23,8 @@ void OSCEngine::run(string port)
 using std::cout;
 using std::endl;
 
-void OSCEngine::event_cb(string path, OSC::Message msg)
+int OSCEngine::event_cb(string path, OSC::Message msg)
 {
   cout << path << endl;
+  return 1;
 }

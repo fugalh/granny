@@ -62,7 +62,7 @@ TEST(Server, addMethod) {
   Server s;
   bool flag = false;
 
-  s.addMethod("/event/any", "if", [&](string, Message) { flag = true; });
+  s.addMethod("/event/any", "if", [&](string, Message) { flag = true; return 1; });
   lo_send(s.getAddress().addr, "/event/*", "if", 42, 3.14159);
   s.recv();
 

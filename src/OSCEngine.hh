@@ -11,5 +11,5 @@ public:
   std::atomic<bool> finished;
 
 private:
-  void event_cb(std::string path, OSC::Message);
+  int event_cb(std::string path, OSC::Message);
 };
