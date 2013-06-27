@@ -2,13 +2,19 @@ import os
 env = Environment(
     ENV=os.environ,
     CXXFLAGS=['-std=c++11'],
-    CPPPATH=['/opt/local/include'],
-    LIBPATH=['/opt/local/lib'],
+    CPPPATH=['/usr/local/include', '/opt/local/include'],
+    LIBPATH=['/usr/local/lib', '/opt/local/lib'],
     LIBS=['sndfile', 'lo'],
     )
 
-testenv = env
-testenv.Append(LIBS=['gtest'])
-testenv.Program('tests', Glob('*.cc') + Glob('test/*.cc'))
+srcs = filter(
+        lambda f: f.path != "main.cc",
+        Glob("*.cc")
+        )
+
+env.Program('granny', srcs + ['main.cc'])
+
+env.Append(LIBS=['gtest'])
+env.Program('tests', srcs + Glob('test/*.cc'))
 
 # vim: ft=python

@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include <iostream>
+
 namespace OSC {
 
 class Arg {

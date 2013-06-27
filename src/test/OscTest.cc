@@ -62,8 +62,8 @@ TEST(Server, addMethod) {
   Server s;
   bool flag = false;
 
-  s.addMethod("/foo", "if", [&](string, Message) { flag = true; });
-  lo_send(s.getAddress().addr, "/foo", "if", 42, 3.14159);
+  s.addMethod("/event/any", "if", [&](string, Message) { flag = true; });
+  lo_send(s.getAddress().addr, "/event/*", "if", 42, 3.14159);
   s.recv();
 
   EXPECT_TRUE(flag);
