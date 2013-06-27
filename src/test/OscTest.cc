@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <thread>
 
 #include "../OSC.hh"
 
@@ -7,6 +8,7 @@ using namespace std;
 using testing::Test;
 using std::vector;
 using std::string;
+using std::thread;
 
 template <class T>
 static void testArgTypeAndValue(char t, T const& v) {
@@ -39,4 +41,30 @@ TEST(Server, ctor) {
 
 TEST(Server, getPort) {
   EXPECT_LT(1024, Server().getPort());
+}
+
+TEST(Server, wait) {
+  Server s;
+  bool flag = false;
+
+  thread t([&] {
+    s.wait(1000);
+    flag = true;
+  });
+
+  EXPECT_FALSE(flag);
+
+  lo_send(s.getAddress().addr, "/foo", "if", 42, 3.14159);
+  t.join();
+}
+
+TEST(Server, addMethod) {
+  Server s;
+  bool flag = false;
+
+  s.addMethod("/foo", "if", [&](string, Message) { flag = true; });
+  lo_send(s.getAddress().addr, "/foo", "if", 42, 3.14159);
+  s.recv();
+
+  EXPECT_TRUE(flag);
 }
