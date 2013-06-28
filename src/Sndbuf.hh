@@ -2,6 +2,7 @@
 
 #include <sndfile.h>
 #include <stdexcept>
+#include <vector>
 
 template <class S = float>
 struct Sndbuf {

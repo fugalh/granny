@@ -7,19 +7,13 @@
 
 using namespace std;
 
-struct OpenWindow : public Window {
-  double at(sf_count_t pos) {
-    return 1;
-  }
-};
-
 struct GrainTest : public ::testing::Test {
   GrainTest()
     : frames_(100), buf_(new Sndbuf<float>(frames_)), win_(new OpenWindow) {}
 
   sf_count_t frames_;
   shared_ptr<Sndbuf<float>> buf_;
-  shared_ptr<Window> win_;
+  shared_ptr<Envelope> win_;
 };
 
 TEST_F(GrainTest, random_start_is_random) {

@@ -1,19 +1,18 @@
 #pragma once
 
 #include "Sndbuf.hh"
-#include <iostream>
-#include <random>
+#include "Envelope.hh"
 
-struct Window {
-  virtual ~Window() = default;
-  virtual double at(sf_count_t pos) = 0;
-};
+#include <iostream>
+#include <memory>
+#include <random>
+#include <vector>
 
 template <class S = float>
 struct Grain {
   Grain(std::shared_ptr<Sndbuf<S>> buf,
         sf_count_t len,
-        std::shared_ptr<Window> win);
+        std::shared_ptr<Envelope> env);
 
   S sample_at(sf_count_t pos, int channel = 0);
 
@@ -22,12 +21,12 @@ private:
 
   std::shared_ptr<Sndbuf<S>> buf_;
   sf_count_t start_;
-  std::shared_ptr<Window> win_;
+  std::shared_ptr<Envelope> env_;
 };
 
 template <class S>
-Grain<S>::Grain(std::shared_ptr<Sndbuf<S>> buf, sf_count_t len, std::shared_ptr<Window> win)
-  : buf_(buf), win_(win), start_(random_start(len)) {}
+Grain<S>::Grain(std::shared_ptr<Sndbuf<S>> buf, sf_count_t len, std::shared_ptr<Envelope> env)
+  : buf_(buf), env_(env), start_(random_start(len)) {}
 
 template <class S>
 sf_count_t Grain<S>::random_start(sf_count_t len)
@@ -43,6 +42,6 @@ sf_count_t Grain<S>::random_start(sf_count_t len)
 template <class S>
 S Grain<S>::sample_at(sf_count_t pos, int channel)
 {
-  return (S)(win_->at(pos) * buf_.samples[pos + start_ + channel]);
+  return (S)(env_->at(pos) * buf_.samples[pos + start_ + channel]);
 }
 
