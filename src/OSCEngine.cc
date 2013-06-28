@@ -14,7 +14,7 @@ using std::vector;
 
 OSCEngine::OSCEngine(OSC::Server&& srv, vector<string> paths,
                      zmq::Context* zctx, string zendpoint)
-  : srv_(std::move(srv)), finished(false), dur_(441 /* 10ms */), env_(new OpenWindow),
+  : srv_(std::move(srv)), finished(false), dur_(441 /* 10ms */), env_(new HannWindow(dur_)),
     zmq_(zctx, zendpoint)
 {
   for (auto p : paths)
