@@ -4,8 +4,7 @@
 #include <stdexcept>
 
 template <class S = float>
-class Sndbuf {
-public:
+struct Sndbuf {
   Sndbuf(SF_INFO const& info);
   Sndbuf(sf_count_t frames = 0,
          int samplerate = 44100,
@@ -15,10 +14,7 @@ public:
   sf_count_t frames() const;
   SF_INFO info();
 
-  void resizef(sf_count_t frames)
-  {
-    samples.resize(frames * channels);
-  }
+  void resizef(sf_count_t frames);
 
   int samplerate;
   int channels;
@@ -62,4 +58,10 @@ SF_INFO Sndbuf<S>::info()
   info.format = format;
 
   return info;
+}
+
+template <class S>
+void Sndbuf<S>::resizef(sf_count_t frames)
+{
+  samples.resize(frames * channels);
 }
