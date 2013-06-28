@@ -3,11 +3,12 @@
 
 #include <atomic>
 #include <string>
+#include <vector>
 
 class OSCEngine
 {
 public:
-  OSCEngine(std::string port, std::string root);
+  OSCEngine(OSC::Server&&, std::vector<std::string> paths);
 
   void run();
 

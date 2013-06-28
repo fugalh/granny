@@ -23,7 +23,7 @@ vector<string> glob(string pattern, int flags)
 }
 
 
-string basename(string path, string suffix)
+string basename(string path, bool strip_suffix)
 {
   auto a = path.rfind("/");
   if (a == string::npos)
@@ -33,9 +33,12 @@ string basename(string path, string suffix)
 
   path = path.substr(a);
 
-  auto b = path.rfind(suffix);
-  if (b != string::npos)
-    path = path.substr(0, b);
+  if (strip_suffix)
+  {
+    auto b = path.rfind(".");
+    if (b != string::npos)
+      path = path.substr(0, b);
+  }
 
   return path;
 }

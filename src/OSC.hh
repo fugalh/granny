@@ -82,11 +82,17 @@ class Server {
 public:
   typedef std::function<int(std::string, Message)> Callback;
 
-  Server(std::string port = "") {
-    char const* p = nullptr;
-    if (port != "")
-      p = port.c_str();
-    server_ = lo_server_new(p, nullptr);
+  Server() {
+    server_ = lo_server_new(nullptr, nullptr);
+  }
+
+  Server(std::string port) {
+    server_ = lo_server_new(port.c_str(), nullptr);
+  }
+
+  Server(Server&& other) : server_(nullptr) {
+    std::swap(server_, other.server_);
+    std::swap(methods_, other.methods_);
   }
 
   ~Server() {

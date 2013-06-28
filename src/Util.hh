@@ -10,6 +10,6 @@ namespace Util {
   std::vector<std::string> glob(std::string pattern,
                                 int flags = GLOB_NOSORT|GLOB_BRACE|GLOB_TILDE);
 
-  std::string basename(std::string path, std::string suffix = "");
+  std::string basename(std::string path, bool strip_suffix = true);
 
 }

@@ -8,16 +8,18 @@ using std::cout;
 using std::endl;
 
 using std::string;
+using std::vector;
 
-OSCEngine::OSCEngine(string port, string root) : srv_(port), finished(false)
+OSCEngine::OSCEngine(OSC::Server&& srv, vector<string> paths)
+  : srv_(std::move(srv)), finished(false)
 {
-  for (auto w : Util::glob(root + "/*.wav"))
+  for (auto p : paths)
   {
-    auto p = string("/event/") + Util::basename(w, ".wav");
+    auto m = string("/event/") + Util::basename(p);
 
-    bufs_[p] = Sndfile(w).read();
+    bufs_[m] = Sndfile(p).read();
 
-    srv_.addMethod(p, "",
+    srv_.addMethod(m, "",
                   // there's supposed to be a more direct way to do this :-P
                   [this](std::string path, OSC::Message msg) {
                     return this->event_cb(path, msg);
