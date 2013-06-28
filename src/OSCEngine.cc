@@ -1,5 +1,6 @@
 #include "OSCEngine.hh"
 
+#include "Sndfile.hh"
 #include "Util.hh"
 
 #include <iostream>
@@ -8,25 +9,28 @@ using std::endl;
 
 using std::string;
 
-void OSCEngine::run(string port)
+OSCEngine::OSCEngine(string port, string root) : srv_(port), finished(false)
 {
-  OSC::Server srv(port);
-
-  auto wavs = Util::glob("wavs/*.wav");
-  for (auto& w : wavs)
+  for (auto w : Util::glob(root + "/*.wav"))
   {
-    auto path = string("/event/") + Util::basename(w, ".wav");
-    srv.addMethod(path, "",
+    auto p = string("/event/") + Util::basename(w, ".wav");
+
+    bufs_[p] = Sndfile(w).read();
+
+    srv_.addMethod(p, "",
                   // there's supposed to be a more direct way to do this :-P
                   [this](std::string path, OSC::Message msg) {
                     return this->event_cb(path, msg);
                   });
   }
+}
 
+void OSCEngine::run()
+{
   while (!finished)
   {
-    if (srv.wait(10))
-      srv.recv();
+    if (srv_.wait(10))
+      srv_.recv();
   }
 }
 

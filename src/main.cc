@@ -2,8 +2,8 @@
 
 int main(int argc, char** argv)
 {
-  OSCEngine osc;
-  osc.run("1337");
+  OSCEngine osc("1337", "wavs");
+  osc.run();
 
   return 0;
 }
