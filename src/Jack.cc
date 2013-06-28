@@ -58,14 +58,14 @@ int JackEngine::process(jack_nframes_t nframes)
 
   while (true)
   {
-    unique_ptr<Grain<float>> grain(zmq_.recv<Grain<float>>());
+    auto grain = zmq_.recv_nonblocking<Grain<float>>();
     if (!grain)
       break;
 
-    auto offset = grain_offset(grain.get());
-
-    log("grain", grain->time, jack_last_frame_time(client_), offset);
+    grains_in_process_.emplace_back(grain);
   }
+
+  process_grains(nframes);
 
   return 0;
 }
@@ -75,9 +75,21 @@ JackEngine::sample_t* JackEngine::get_buffer(jack_nframes_t nframes)
   return (sample_t*)jack_port_get_buffer(port_, nframes);
 }
 
-jack_time_t JackEngine::grain_offset(Grain<float> const* grain)
+int64_t JackEngine::grain_offset(Grain<float> const* grain)
 {
-  jack_time_t latency = 10 * 1000 * 1000; // 1 second
-  jack_nframes_t f = jack_time_to_frames(client_, grain->time + latency);
-  return std::max<jack_nframes_t>(0, f - jack_last_frame_time(client_));
+  jack_time_t latency = 100 * 1000;
+  int64_t f = jack_time_to_frames(client_, grain->time + latency);
+  jack_nframes_t now = jack_last_frame_time(client_);
+
+  return f - now;
+}
+
+void JackEngine::process_grains(jack_nframes_t nframes)
+{
+  for (auto& grain : grains_in_process_)
+  {
+    auto offset = grain_offset(grain.get());
+    log("grain", grain->time, jack_last_frame_time(client_), offset);
+  }
+  grains_in_process_.clear();
 }

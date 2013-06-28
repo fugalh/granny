@@ -5,6 +5,10 @@
 #include <zmq.h>
 #include <string>
 
+#include "Util.hh"
+
+using Util::log;
+
 namespace zmq {
 
 class Context {
@@ -45,21 +49,29 @@ public:
 class Sink : public Socket {
 public:
   Sink(Context*, std::string name);
-  template <class T> T* recv(bool nonblocking = true)
+
+  template <class T> T* recv(bool blocking = true)
   {
     T* ptr;
     int ret;
 
     do {
       ret = zmq_recv(sock_, &ptr, sizeof(ptr),
-                     nonblocking ? ZMQ_DONTWAIT : 0);
-    } while (ret == -1 && (errno == EAGAIN || errno == EINTR));
+                     blocking ? 0 : ZMQ_DONTWAIT);
+    } while (ret == -1 &&
+             (errno == EINTR || (blocking && errno == EAGAIN)));
 
     if (ret == -1)
       ptr = nullptr;
 
     return ptr;
   }
+
+  template <class T> T* recv_nonblocking()
+  {
+    return recv<T>(false);
+  }
+
 };
 
 }
