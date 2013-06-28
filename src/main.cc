@@ -9,14 +9,12 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-  thread osc_thread([] {
-    OSCEngine osc(OSC::Server("1337"), Util::glob("wavs/*.wav"));
-    osc.run();
-  });
+  zmq::Context z;
 
-  JackEngine je;
+  JackEngine je(&z, "jack");
 
-  osc_thread.join();
+  OSCEngine osc(OSC::Server("1337"), Util::glob("wavs/*.wav"), &z, "jack");
+  osc.run();
 
   return 0;
 }

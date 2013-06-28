@@ -1,9 +1,18 @@
+#include "Grain.hh"
 #include "Jack.hh"
+#include "Util.hh"
 
-#include <stdexcept>
+#include <memory>
 #include <iostream>
+#include <stdexcept>
 
-JackEngine::JackEngine()
+using std::cout;
+using std::endl;
+using Util::log;
+using std::unique_ptr;
+
+JackEngine::JackEngine(zmq::Context* zctx, std::string zendpoint)
+  : zmq_(zctx, zendpoint)
 {
   client_ = jack_client_open("granny", JackNullOption, nullptr);
   if (client_ == nullptr)
@@ -25,7 +34,7 @@ JackEngine::JackEngine()
   if (ports)
   {
     jack_connect(client_, jack_port_name(port_), ports[0]);
-    free (ports);
+    jack_free(ports);
   }
 }
 
@@ -39,7 +48,26 @@ int JackEngine::process_callback(jack_nframes_t nframes, void* arg)
 {
   JackEngine* je = (JackEngine*)arg;
 
-  // success
+  return je->process(nframes);
+}
+
+int JackEngine::process(jack_nframes_t nframes)
+{
+  auto buf = get_buffer(nframes);
+
+  while (true)
+  {
+    unique_ptr<Grain<float>> grain(zmq_.recv<Grain<float>>());
+    if (!grain)
+      break;
+
+    log("grain", grain->time);
+  }
+
   return 0;
 }
 
+JackEngine::sample_t* JackEngine::get_buffer(jack_nframes_t nframes)
+{
+  return (sample_t*)jack_port_get_buffer(port_, nframes);
+}

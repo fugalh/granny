@@ -1,6 +1,7 @@
 #include "Grain.hh"
 #include "OSC.hh"
 #include "Sndbuf.hh"
+#include "zmq.hh"
 
 #include <atomic>
 #include <memory>
@@ -10,7 +11,8 @@
 class OSCEngine
 {
 public:
-  OSCEngine(OSC::Server&&, std::vector<std::string> paths);
+  OSCEngine(OSC::Server&&, std::vector<std::string> paths,
+            zmq::Context*, std::string zmq_endpoint);
 
   void run();
 
@@ -22,4 +24,5 @@ private:
   OSC::Server srv_;
   sf_count_t dur_;
   std::shared_ptr<Envelope> env_;
+  zmq::Source zmq_;
 };

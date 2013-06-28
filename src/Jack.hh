@@ -1,15 +1,22 @@
 #pragma once
 
+#include "zmq.hh"
+
 #include <jack/jack.h>
 
 class JackEngine {
 public:
-  JackEngine();
+  typedef jack_default_audio_sample_t sample_t;
+
+  JackEngine(zmq::Context*, std::string zmq_endpoint);
   ~JackEngine();
 
 private:
   static int process_callback(jack_nframes_t, void*);
+  int process(jack_nframes_t);
+  sample_t* get_buffer(jack_nframes_t);
 
   jack_client_t* client_;
   jack_port_t* port_;
+  zmq::Sink zmq_;
 };
