@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glob.h>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -12,4 +13,12 @@ namespace Util {
 
   std::string basename(std::string path, bool strip_suffix = true);
 
+  void log();
+
+  template <class T, class ...Args>
+  void log(T arg0, Args... args)
+  {
+    std::cout << arg0 << ' ';
+    log(args...);
+  }
 }

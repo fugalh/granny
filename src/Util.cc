@@ -43,4 +43,9 @@ string basename(string path, bool strip_suffix)
   return path;
 }
 
+void log()
+{
+  std::cout << std::endl;
+}
+
 }
