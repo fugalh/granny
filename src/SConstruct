@@ -5,7 +5,7 @@ env = Environment(
     CXXFLAGS=['-std=c++11'],
     CPPPATH=['/usr/local/include', '/opt/local/include'],
     LIBPATH=['/usr/local/lib', '/opt/local/lib'],
-    LIBS=['sndfile', 'lo'],
+    LIBS=['sndfile', 'lo', 'jack'],
     )
 
 srcs = filter(
