@@ -5,6 +5,7 @@
 #include <memory>
 #include <iostream>
 #include <stdexcept>
+#include <string.h>
 
 using std::cout;
 using std::endl;
@@ -54,8 +55,6 @@ int JackEngine::process_callback(jack_nframes_t nframes, void* arg)
 
 int JackEngine::process(jack_nframes_t nframes)
 {
-  auto buf = get_buffer(nframes);
-
   while (true)
   {
     auto grain = zmq_.recv_nonblocking<Grain<float>>();
@@ -86,10 +85,30 @@ int64_t JackEngine::grain_offset(Grain<float> const* grain)
 
 void JackEngine::process_grains(jack_nframes_t nframes)
 {
+  auto buf = get_buffer(nframes);
+  memset(buf, 0, sizeof(sample_t) * nframes);
+
   for (auto& grain : grains_in_process_)
   {
     auto offset = grain_offset(grain.get());
-    log("grain", grain->time, jack_last_frame_time(client_), offset);
+
+    sf_count_t gi = 0;
+    if (offset < 0)
+      gi = -offset;
+
+    jack_nframes_t ji = 0;
+    if (offset > 0)
+      ji = offset;
+
+    while (gi < grain->len && ji < nframes)
+    {
+      buf[ji] = grain->sample_at(gi);
+      gi++; ji++;
+    }
   }
-  grains_in_process_.clear();
+
+  grains_in_process_.remove_if(
+    [&](unique_ptr<Grain<float>> const& g) {
+      return -grain_offset(g.get()) > g->len;
+    });
 }
