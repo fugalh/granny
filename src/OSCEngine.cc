@@ -24,10 +24,10 @@ OSCEngine::OSCEngine(OSC::Server&& srv, vector<string> paths,
     bufs_[m] = std::make_shared<Sndbuf<float>>(Sndfile(p).read());
 
     srv_.addMethod(m, "",
-                  // there's supposed to be a more direct way to do this :-P
-                  [this](std::string path, OSC::Message msg) {
-                    return this->event_cb(path, msg);
-                  });
+      // there's supposed to be a more direct way to do this :-P
+      [this](std::string path, OSC::Message msg) {
+        return this->event_cb(path, msg);
+      });
   }
 }
 

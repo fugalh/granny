@@ -20,6 +20,10 @@ public:
 
 private:
   int event_cb(std::string path, OSC::Message);
+
+  // calculate the current offset: system time - jack time
+  uint64_t time_offset_us();
+
   std::unordered_map<std::string, std::shared_ptr<Sndbuf<float>>> bufs_;
   OSC::Server srv_;
   sf_count_t dur_;

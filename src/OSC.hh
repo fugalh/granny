@@ -2,12 +2,13 @@
 
 #include <functional>
 #include <lo/lo.h>
+#include <math.h>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-#include <iostream>
+#include "Util.hh"
 
 namespace OSC {
 
@@ -62,6 +63,22 @@ struct Message {
     }
   }
 
+  double timestamp() {
+    auto tt = timetag();
+    if (tt.sec == LO_TT_IMMEDIATE.sec &&
+        tt.frac == LO_TT_IMMEDIATE.frac)
+      return 0;
+
+    // Lifted straight from liblo source.
+    // 1970-01-01T00:00:00Z - 1900-01-01T00:00:00Z
+    auto seventy_years = 0x83aa7e80;
+    return tt.sec + (double)tt.frac / pow(2, 32) - seventy_years;
+  }
+
+  lo_timetag timetag() {
+    return lo_message_get_timestamp(msg);
+  }
+
   std::vector<Arg> args;
   lo_message msg;
 };
@@ -84,10 +101,12 @@ public:
 
   Server() {
     server_ = lo_server_new(nullptr, nullptr);
+    init();
   }
 
   Server(std::string port) {
     server_ = lo_server_new(port.c_str(), nullptr);
+    init();
   }
 
   Server(Server&& other) : server_(nullptr) {
@@ -134,6 +153,15 @@ private:
     if (s->methods_.find(path) == s->methods_.end())
       return 0;
     return s->methods_[path](std::string(path), Message(types, argv, argc, msg));
+  }
+
+  void init()
+  {
+    auto url = lo_server_get_url(server_);
+    Util::log(lo_server_get_url(server_));
+    free(url);
+
+    lo_server_enable_queue(server_, 1, 0);
   }
 
   lo_server server_;
