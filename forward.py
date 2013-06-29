@@ -1,4 +1,7 @@
 #!python -u
+
+# Be sure to get pyOSC from github.
+# The latest release tarball (3 years old) is buggy wrt time tags.
 import OSC
 import sys
 import time
