@@ -100,7 +100,7 @@ void JackEngine::process_grains(jack_nframes_t nframes)
 
     while (gi < grain->len && ji < nframes)
     {
-      buf[ji] = grain->sample_at(gi) * 0.05;
+      buf[ji] = grain->sample_at(gi) * 0.1;
       gi++;
       ji++;
     }
