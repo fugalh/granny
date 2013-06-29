@@ -19,15 +19,15 @@ class Far(object):
         bundle.append(msg)
         self.client.send(bundle)
 
-far = Far((sys.argv[0], 1337))
+far = Far((sys.argv[1], 1337))
+first = None
+now = time.time()
 
 for line in sys.stdin:
     try:
         line = line.strip().split()
         if len(line) != 1 and len(line) != 3:
             continue
-
-        print line
 
         what = line[0]
         when = None
@@ -36,13 +36,20 @@ for line in sys.stdin:
             when, micros = (when + ".").split('.', 1)
             when = time.mktime(time.strptime(when, "%Y/%m/%d %H:%M:%S"))
             when += float(micros) / 1e6
+
+            if when < now:
+                if first is None:
+                    first = now - when
+                    print first
+
+                when += first
+
         if when is None:
             when = time.time()
 
         # buffer in some latency
-        when += 10
+        when += 1
 
-        print what, when
         far.send(what, when)
     except:
         traceback.print_exc()
