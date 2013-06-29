@@ -18,7 +18,7 @@ private:
   sample_t* get_buffer(jack_nframes_t);
 
   /* Actual grain time + nominal latency, offset from block time */
-  int64_t grain_offset(Grain<float> const* grain);
+  ssize_t grain_offset(Grain<float> const* grain);
 
   void process_grains(jack_nframes_t);
 

@@ -74,10 +74,9 @@ JackEngine::sample_t* JackEngine::get_buffer(jack_nframes_t nframes)
   return (sample_t*)jack_port_get_buffer(port_, nframes);
 }
 
-int64_t JackEngine::grain_offset(Grain<float> const* grain)
+ssize_t JackEngine::grain_offset(Grain<float> const* grain)
 {
-  jack_time_t latency = 100 * 1000;
-  int64_t f = jack_time_to_frames(client_, grain->time + latency);
+  ssize_t f = jack_time_to_frames(client_, grain->time);
   jack_nframes_t now = jack_last_frame_time(client_);
 
   return f - now;
@@ -90,20 +89,20 @@ void JackEngine::process_grains(jack_nframes_t nframes)
 
   for (auto& grain : grains_in_process_)
   {
-    auto offset = grain_offset(grain.get());
+    ssize_t ji = grain_offset(grain.get());
+    ssize_t gi = 0;
 
-    sf_count_t gi = 0;
-    if (offset < 0)
-      gi = -offset;
-
-    jack_nframes_t ji = 0;
-    if (offset > 0)
-      ji = offset;
+    if (ji < 0)
+    {
+      gi += -ji;
+      ji = 0;
+    }
 
     while (gi < grain->len && ji < nframes)
     {
-      buf[ji] = grain->sample_at(gi);
-      gi++; ji++;
+      buf[ji] = grain->sample_at(gi) * 0.05;
+      gi++;
+      ji++;
     }
   }
 
