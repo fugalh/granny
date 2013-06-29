@@ -14,7 +14,7 @@ using std::vector;
 
 OSCEngine::OSCEngine(OSC::Server&& srv, vector<string> paths,
                      zmq::Context* zctx, string zendpoint)
-  : srv_(std::move(srv)), finished(false), dur_(441 /* 10ms */), env_(new HannWindow(dur_)),
+  : srv_(std::move(srv)), finished(false), dur_(4410), env_(new HannWindow(dur_)),
     zmq_(zctx, zendpoint)
 {
   for (auto p : paths)
@@ -43,6 +43,8 @@ void OSCEngine::run()
 int OSCEngine::event_cb(string path, OSC::Message msg)
 {
   auto g = new Grain<float>(bufs_[path], dur_, env_);
+  g->time += 3000; // add some latency to account for liblo delay
+  //Util::log(path, g->time);
   zmq_.send(g);
   return 1;
 }

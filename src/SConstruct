@@ -1,7 +1,7 @@
 import os
 env = Environment(
     ENV=os.environ,
-    CPPFLAGS=['-g'],
+    CPPFLAGS=['-O2'],
     CXXFLAGS=['-std=c++11'],
     CPPPATH=['/usr/local/include', '/opt/local/include'],
     LIBPATH=['/usr/local/lib', '/opt/local/lib'],
