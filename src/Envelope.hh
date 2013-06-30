@@ -18,14 +18,15 @@ struct OpenWindow : public Envelope {
 
 class HannWindow : public Envelope {
 public:
-  HannWindow(sf_count_t dur) : dur_(dur) {}
+  HannWindow(sf_count_t dur, double gain = 1) : dur_(dur), gain_(gain) {}
 
   double at(sf_count_t pos) {
     auto hann = (1.0 - cos(2.0 * M_PI * pos / (dur_ - 1))) / 2.0;
-    return hann;
+    return hann * gain_;
   }
 
 private:
   sf_count_t dur_;
+  double gain_;
 };
 

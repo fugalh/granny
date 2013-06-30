@@ -17,6 +17,7 @@ OSCEngine::OSCEngine(OSC::Server&& srv, vector<string> paths,
   : srv_(std::move(srv)), finished(false), dur_(4410), env_(new HannWindow(dur_)),
     zmq_(zctx, zendpoint)
 {
+  int i = 1;
   for (auto p : paths)
   {
     auto m = string("/event/") + Util::basename(p);
@@ -29,11 +30,11 @@ OSCEngine::OSCEngine(OSC::Server&& srv, vector<string> paths,
         return this->event_cb(path, msg);
       });
 
-    srv_.addMethod(m, "i",
-      // there's supposed to be a more direct way to do this :-P
-      [this](std::string path, OSC::Message msg) {
+    // Support a column of TouchOSC multi-push buttons
+    srv_.addMethod(string("/event/1/") + std::to_string(i++), "i",
+      [=](std::string path, OSC::Message msg) {
         if (msg.args[0].i() == 1)
-          return this->event_cb(path, msg);
+          return this->event_cb(m, msg);
         return 0;
       });
   }
@@ -44,7 +45,12 @@ OSCEngine::OSCEngine(OSC::Server&& srv, vector<string> paths,
       auto s = ms / 1000;
       auto sr = 44100; // TODO get this from jack
       dur_ = sr * s;
-      Util::log(ms, dur_);
+      return 1;
+    });
+
+  srv_.addMethod("/control/gain", "f",
+    [this](std::string path, OSC::Message msg) {
+      env_.reset(new HannWindow(dur_, msg.args[0].f()));
       return 1;
     });
 }
@@ -60,9 +66,11 @@ void OSCEngine::run()
 
 int OSCEngine::event_cb(string path, OSC::Message msg)
 {
+  if (bufs_.find(path) == bufs_.end())
+    return 0;
+
   auto g = new Grain<float>(bufs_[path], dur_, env_);
   g->time += 10000; // add some latency to account for liblo delay
-  //Util::log(path, g->time);
   zmq_.send(g);
   return 1;
 }
