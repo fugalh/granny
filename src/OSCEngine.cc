@@ -28,6 +28,14 @@ OSCEngine::OSCEngine(OSC::Server&& srv, vector<string> paths,
       [this](std::string path, OSC::Message msg) {
         return this->event_cb(path, msg);
       });
+
+    srv_.addMethod(m, "i",
+      // there's supposed to be a more direct way to do this :-P
+      [this](std::string path, OSC::Message msg) {
+        if (msg.args[0].i() == 1)
+          return this->event_cb(path, msg);
+        return 0;
+      });
   }
 }
 
