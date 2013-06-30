@@ -21,7 +21,7 @@ public:
   HannWindow(sf_count_t dur) : dur_(dur) {}
 
   double at(sf_count_t pos) {
-    auto hann = (1 - cos(2 * M_PI * pos / (dur_ - 1))) / 2;
+    auto hann = (1.0 - cos(2.0 * M_PI * pos / (dur_ - 1))) / 2.0;
     return hann;
   }
 

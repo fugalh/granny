@@ -100,11 +100,14 @@ void JackEngine::process_grains(jack_nframes_t nframes)
 
     while (gi < grain->len && ji < nframes)
     {
-      buf[ji] = grain->sample_at(gi) * 0.1;
+      buf[ji] += grain->sample_at(gi);
       gi++;
       ji++;
     }
   }
+
+  for (auto i = 0; i < nframes; i++)
+    buf[i] *= 0.05;
 
   grains_in_process_.remove_if(
     [&](unique_ptr<Grain<float>> const& g) {

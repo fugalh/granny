@@ -51,7 +51,7 @@ void OSCEngine::run()
 int OSCEngine::event_cb(string path, OSC::Message msg)
 {
   auto g = new Grain<float>(bufs_[path], dur_, env_);
-  g->time += 3000; // add some latency to account for liblo delay
+  g->time += 10000; // add some latency to account for liblo delay
   //Util::log(path, g->time);
   zmq_.send(g);
   return 1;
