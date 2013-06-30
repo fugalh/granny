@@ -37,6 +37,16 @@ OSCEngine::OSCEngine(OSC::Server&& srv, vector<string> paths,
         return 0;
       });
   }
+
+  srv_.addMethod("/control/duration", "f",
+    [this](std::string path, OSC::Message msg) {
+      auto ms = msg.args[0].f();
+      auto s = ms / 1000;
+      auto sr = 44100; // TODO get this from jack
+      dur_ = sr * s;
+      Util::log(ms, dur_);
+      return 1;
+    });
 }
 
 void OSCEngine::run()
