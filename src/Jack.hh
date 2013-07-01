@@ -14,6 +14,8 @@ public:
 
 private:
   static int process_callback(jack_nframes_t, void*);
+  static int on_xrun(void*);
+
   int process(jack_nframes_t);
   sample_t* get_buffer(jack_nframes_t);
 

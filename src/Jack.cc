@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <iostream>
+#include <jack/statistics.h>
 #include <stdexcept>
 #include <string.h>
 
@@ -26,6 +27,8 @@ JackEngine::JackEngine(zmq::Context* zctx, std::string zendpoint)
                              JackPortIsOutput|JackPortIsTerminal, 0);
   if (port_ == nullptr)
     throw std::runtime_error("Couldn't crate jack port.");
+
+  jack_set_xrun_callback(client_, on_xrun, this);
 
   if (0 != jack_activate(client_))
     throw std::runtime_error("Couldn't activate jack.");
@@ -113,4 +116,12 @@ void JackEngine::process_grains(jack_nframes_t nframes)
     [&](unique_ptr<Grain<float>> const& g) {
       return -grain_offset(g.get()) > g->len;
     });
+}
+
+int JackEngine::on_xrun(void* arg)
+{
+  JackEngine* je = (JackEngine*)arg;
+  Util::log("xrun", jack_get_xrun_delayed_usecs(je->client_) / 1e6,
+            "at", jack_last_frame_time(je->client_));
+  return 0;
 }
