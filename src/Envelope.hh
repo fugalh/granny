@@ -5,28 +5,57 @@
 
 #include <math.h>
 
-struct Envelope {
+struct Envelope
+{
   virtual ~Envelope() = default;
-  virtual double at(sf_count_t pos) = 0;
+
+  double* data() { return data_.data(); }
+
+  void init(sf_count_t nsamples, double gain)
+  {
+    data_.resize(nsamples);
+
+    calc(nsamples);
+
+    auto d = data_.data();
+    for (sf_count_t i = 0; i < nsamples; i++)
+      d[i] *= gain;
+  }
+
+protected:
+  virtual void calc(sf_count_t nsamples) = 0;
+
+  std::vector<double> data_;
 };
 
-struct OpenWindow : public Envelope {
-  double at(sf_count_t pos) {
-    return 1;
+class OpenWindow : public Envelope {
+public:
+  OpenWindow(sf_count_t nsamples, double gain = 1)
+  {
+    init(nsamples, gain);
+  }
+
+private:
+  void calc(sf_count_t nsamples)
+  {
+    auto d = data();
+    for (sf_count_t i = 0; i < nsamples; i++)
+      d[i] = 1;
   }
 };
 
 class HannWindow : public Envelope {
 public:
-  HannWindow(sf_count_t dur, double gain = 1) : dur_(dur), gain_(gain) {}
-
-  double at(sf_count_t pos) {
-    auto hann = (1.0 - cos(2.0 * M_PI * pos / (dur_ - 1))) / 2.0;
-    return hann * gain_;
+  HannWindow(sf_count_t nsamples, double gain = 1)
+  {
+    init(nsamples, gain);
   }
 
 private:
-  sf_count_t dur_;
-  double gain_;
+  void calc(sf_count_t nsamples)
+  {
+    auto d = data();
+    for (sf_count_t i = 0; i < nsamples; i++)
+      d[i] = (1.0 - cos(2.0 * M_PI * i / (nsamples - 1))) / 2.0;
+  }
 };
-

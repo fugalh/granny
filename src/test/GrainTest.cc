@@ -9,7 +9,7 @@ using namespace std;
 
 struct GrainTest : public ::testing::Test {
   GrainTest()
-    : frames_(100), buf_(new Sndbuf<float>(frames_)), win_(new OpenWindow) {}
+    : frames_(100), buf_(new Sndbuf<float>(frames_)), win_(new OpenWindow(frames_)) {}
 
   sf_count_t frames_;
   shared_ptr<Sndbuf<float>> buf_;

@@ -20,7 +20,7 @@ struct Grain {
   S sample_at(sf_count_t pos, int channel = 0)
   {
     auto i = (pos + start_) * buf_->channels + channel;
-    return env_->at(pos) * buf_->samples[i];
+    return env_->data()[pos] * buf_->samples[i];
   }
 
   jack_time_t time;
