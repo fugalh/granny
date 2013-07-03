@@ -1,2 +1,4 @@
 # read sandbox and pretend all packets are gets. tcpdump doesn't give date, so we have to add one
-tcpdump -r mc.sandbox.pcap | awk '{print "get 2013/06/28", $1}' | python -u ./forward.py localhost
+event=${1:-get}
+date=`date +%Y-%m-%d -d 'yesterday'`
+awk '{print "'$event' '$date'", $1}' | ./forward.py ${2:-localhost}
