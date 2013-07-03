@@ -1,0 +1,18 @@
+granny: event-based granular synthesis
+
+Requirements: jack, liblo, libsndfile
+
+Make >100ms wav files and put them in wavs/
+(Must be 44.1kHz for now. Stereo is ok, but we only use the first channel.)
+Granny will respond to OSC events /event/$(basename wavs/*.wav)
+
+It recognizes bundles, and honors bundle timestamps
+(with some added internal latency)
+
+Also responds to
+/control/gain f (gain from 0-1)
+/control/duration i (grain duration in milliseconds)
+/control/envelope s (name of envelope - see Envelope.hh)
+
+There is a TouchOSC UI in ui/ - TouchOSC isn't free but it's worth the $5 for
+your iOS or Android device.
