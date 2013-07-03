@@ -1,6 +1,6 @@
 #!python -u
 
-# Be sure to get pyOSC from github.
+# Be sure to get pyOSC from github or gitorious.
 # The latest release tarball (3 years old) is buggy wrt time tags.
 import OSC
 import sys
