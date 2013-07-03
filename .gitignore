@@ -1,3 +1,5 @@
 *.dSYM
 granny
 tests
+.sconsign.dblite
+filters
