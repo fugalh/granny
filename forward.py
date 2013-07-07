@@ -70,9 +70,6 @@ while True:
         if when is None:
             when = time.time()
 
-        # buffer in some latency
-        when += latency
-
         far.send(what, when)
 
     except OSC.OSCClientError:

@@ -1,0 +1,16 @@
+./forward.py [$host [$port]]
+tcpdump -l ... | ./tcpdumped.sh $event | ./forward.py
+ngrep -lt -W single ... | ./ngrepped.sh [$event] | ./forward.py
+
+In general, you must avoid buffering stdout and stdin for everything in the
+pipe. Examples:
+
+    tcpdump -l
+    ngrep -l
+    gsed -u
+    grep --line-buffered
+    awk '{...; fflush()}'
+
+The scripts and forward.py don't need a special argument.
+
+Read the scripts for more details/usage.
