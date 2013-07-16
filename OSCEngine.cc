@@ -3,6 +3,7 @@
 #include "Sndfile.hh"
 #include "Util.hh"
 #include "Grain.hh"
+#include "Options.hh"
 
 #include <memory>
 
@@ -69,10 +70,13 @@ int OSCEngine::event_cb(string path, OSC::Message msg)
   if (bufs_.find(path) == bufs_.end())
     return 0;
 
+  if (verbose)
+    Util::log(path);
+
   // XXX If the grain is not as long as dur_ things will get ugly. Better to
   // recalculate the envelope for each duration (and cache)
   auto g = new Grain<float>(bufs_[path], dur_, env_);
-  g->time += 1000000; // add some latency to account for liblo delay
+  g->time += 1e3; // add some latency to account for pipeline delay
   zmq_.send(g);
   return 1;
 }

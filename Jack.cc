@@ -2,6 +2,7 @@
 #include "Jack.hh"
 #include "Util.hh"
 
+#include <ctime>
 #include <memory>
 #include <iostream>
 #include <jack/statistics.h>
@@ -121,7 +122,8 @@ void JackEngine::process_grains(jack_nframes_t nframes)
 int JackEngine::on_xrun(void* arg)
 {
   JackEngine* je = (JackEngine*)arg;
+  std::time_t t = std::time(nullptr);
   Util::log("xrun", jack_get_xrun_delayed_usecs(je->client_) / 1e6,
-            "at", jack_last_frame_time(je->client_));
+            "at", std::ctime(&t));
   return 0;
 }
