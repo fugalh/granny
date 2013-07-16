@@ -6,6 +6,7 @@
 #include "Options.hh"
 
 #include <memory>
+#include <sys/time.h>
 
 using std::cout;
 using std::endl;
@@ -15,7 +16,8 @@ using std::vector;
 
 OSCEngine::OSCEngine(OSC::Server&& srv, vector<string> paths,
                      zmq::Context* zctx, string zendpoint)
-  : srv_(std::move(srv)), finished(false), dur_(4410), env_(new HannWindow(dur_)),
+  : srv_(std::move(srv)), finished(false), dur_(4410),
+    env_(new HannWindow(dur_)),
     zmq_(zctx, zendpoint)
 {
   int i = 1;
@@ -65,13 +67,21 @@ void OSCEngine::run()
   }
 }
 
+static string nowPretty() {
+  timeval tv;
+  gettimeofday(&tv, nullptr);
+  return std::to_string(tv.tv_sec + tv.tv_usec / 1e6);
+}
+
 int OSCEngine::event_cb(string path, OSC::Message msg)
 {
-  if (bufs_.find(path) == bufs_.end())
+  if (bufs_.count(path) == 0)
     return 0;
 
   if (verbose)
-    Util::log(path);
+  {
+    Util::log(nowPretty(), path);
+  }
 
   // XXX If the grain is not as long as dur_ things will get ugly. Better to
   // recalculate the envelope for each duration (and cache)
