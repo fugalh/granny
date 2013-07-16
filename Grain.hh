@@ -14,7 +14,8 @@ struct Grain {
   Grain(std::shared_ptr<Sndbuf<S>> buf,
         sf_count_t len,
         std::shared_ptr<Envelope> env)
-    : buf_(buf), env_(env), len(len), start_(random_start()), time(jack_get_time())
+    : buf_(buf), env_(env), len(len), start_(random_start()),
+      time(jack_get_time())
   {}
 
   S sample_at(sf_count_t pos, int channel = 0)

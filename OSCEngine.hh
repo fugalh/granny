@@ -29,4 +29,6 @@ private:
   sf_count_t dur_;
   std::shared_ptr<Envelope> env_;
   zmq::Source zmq_;
+  jack_time_t latency_;
+  sf_count_t sampleRate_;
 };

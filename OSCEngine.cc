@@ -18,7 +18,7 @@ OSCEngine::OSCEngine(OSC::Server&& srv, vector<string> paths,
                      zmq::Context* zctx, string zendpoint)
   : srv_(std::move(srv)), finished(false), dur_(4410),
     env_(new HannWindow(dur_)),
-    zmq_(zctx, zendpoint)
+    zmq_(zctx, zendpoint), latency_(0), sampleRate_(44100)
 {
   int i = 1;
   for (auto p : paths)
@@ -46,8 +46,7 @@ OSCEngine::OSCEngine(OSC::Server&& srv, vector<string> paths,
     [this](std::string path, OSC::Message msg) {
       auto ms = msg.args[0].f();
       auto s = ms / 1000;
-      auto sr = 44100; // TODO get this from jack
-      dur_ = sr * s;
+      dur_ = sampleRate_ * s;
       return 1;
     });
 
@@ -56,6 +55,14 @@ OSCEngine::OSCEngine(OSC::Server&& srv, vector<string> paths,
       env_.reset(new HannWindow(dur_, msg.args[0].f()));
       return 1;
     });
+
+  srv_.addMethod("/control/latency", "f",
+		 [this](string path, OSC::Message msg) {
+		   auto ms = msg.args[0].f();		
+		   latency_ = ms * 1000;
+		   if (verbose) Util::log("latency:", latency_, "us");
+		   return 1;
+		 });
 }
 
 void OSCEngine::run()
@@ -80,13 +87,13 @@ int OSCEngine::event_cb(string path, OSC::Message msg)
 
   if (verbose)
   {
-    Util::log(nowPretty(), path);
+    Util::log(path);
   }
 
   // XXX If the grain is not as long as dur_ things will get ugly. Better to
   // recalculate the envelope for each duration (and cache)
   auto g = new Grain<float>(bufs_[path], dur_, env_);
-  g->time += 1e3; // add some latency to account for pipeline delay
+  g->time += latency_; // add some latency to account for pipeline delay
   zmq_.send(g);
   return 1;
 }
