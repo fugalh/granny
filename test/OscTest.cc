@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <thread>
 
-#include "../OSC.hh"
+#include "OSC.hh"
 
 using namespace OSC;
 using namespace std;

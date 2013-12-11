@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <unistd.h>
 
-#include "../Sndfile.hh"
+#include "Sndfile.hh"
 
 using namespace std;
 using testing::Test;

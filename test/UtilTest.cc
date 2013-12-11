@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../Util.hh"
+#include "Util.hh"
 
 TEST(basename, relative_path) {
   EXPECT_EQ("foo", Util::basename("path/to/foo"));

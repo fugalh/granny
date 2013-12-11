@@ -3,7 +3,7 @@
 #include <memory>
 
 #define private public
-#include "../Grain.hh"
+#include "Grain.hh"
 
 using namespace std;
 

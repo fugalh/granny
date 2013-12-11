@@ -1,4 +1,4 @@
-#include "../zmq.hh"
+#include "zmq.hh"
 #include <gtest/gtest.h>
 
 #include <string>

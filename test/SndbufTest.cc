@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../Sndbuf.hh"
+#include "Sndbuf.hh"
 
 using namespace std;
 using testing::Test;

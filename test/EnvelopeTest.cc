@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../Envelope.hh"
+#include "Envelope.hh"
 
 TEST(Hann, zero_at_edges)
 {

@@ -15,7 +15,7 @@ srcs = filter(
 
 env.Program('granny', srcs + ['main.cc'])
 
-env.Append(LIBS=['gtest'])
-env.Program('tests', srcs + Glob('test/*.cc'))
+env.Append(LIBS=['gtest'], CPPPATH=['.'])
+env.Program('tests', srcs + Glob('../test/*.cc'))
 
 # vim: ft=python
