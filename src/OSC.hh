@@ -3,6 +3,7 @@
 #include <functional>
 #include <lo/lo.h>
 #include <math.h>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -157,9 +158,8 @@ private:
 
   void init()
   {
-    auto url = lo_server_get_url(server_);
-    Util::log(lo_server_get_url(server_));
-    free(url);
+    std::unique_ptr<char> url(lo_server_get_url(server_));
+    Util::log(url.get());
 
     lo_server_enable_queue(server_, 1, 0);
   }
