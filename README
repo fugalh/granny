@@ -6,7 +6,7 @@ Make >100ms wav files and put them in wavs/
 (Must be 44.1kHz for now. Stereo is ok, but we only use the first channel.)
 Granny will respond to OSC events /event/$(basename wavs/*.wav)
 
-It recognizes bundles, and honors bundle timestamps
+It recognizes OSC bundles, and honors bundle timestamps
 (with some added internal latency)
 
 Also responds to
