@@ -1,23 +1,10 @@
 #!/usr/bin/env python
+import granny
 
-# Be sure to get pyOSC from github or gitorious.
-# The latest release tarball (3 years old) is buggy wrt time tags.
-import OSC
 import sys
 import time
 import traceback
 
-class Far(object):
-    def __init__(self, addr):
-        self.client = OSC.OSCClient()
-        self.client.connect(addr)
-
-    def send(self, what, when):
-        addr = '/event/' + what
-        msg = OSC.OSCMessage(addr)
-        bundle = OSC.OSCBundle(addr, when)
-        bundle.append(msg)
-        self.client.send(bundle)
 
 host = 'localhost'
 port = 1337
@@ -27,7 +14,7 @@ if len(sys.argv) > 1:
     host = sys.argv[1]
 if len(sys.argv) > 2:
     port = int(sys.argv[2])
-far = Far((host, 1337))
+gran = granny.Client((host, 1337))
 
 first = None
 now = time.time()
@@ -67,10 +54,7 @@ while True:
                     first = 0
             when += first
 
-        if when is None:
-            when = time.time()
-
-        far.send(what, when)
+        gran.send(what, when)
 
     except OSC.OSCClientError:
         raise
