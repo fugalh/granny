@@ -18,7 +18,15 @@ except:
 
 p.setfilter('port 11302')
 
-gran = granny.Client(('localhost', 1337))
+def parse_opts():
+    import optparse
+    op = optparse.OptionParser()
+    op.add_option("-H", "--host", default="localhost")
+    op.add_option("-P", "--port", default=1337)
+    return op.parse_args()
+(opts, args) = parse_opts()
+
+gran = granny.Client((opts.host, opts.port))
 
 def payload(pkt):
     eth = dpkt.ethernet.Ethernet(pkt)
