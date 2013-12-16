@@ -1,0 +1,16 @@
+There's a couple problems.
+1. when starting out and/or adjusting parameters sometimes it gets in a mode where there's lots of static. this isn't overdriving anything it's just noise. adjusting parameters can make it go away.
+
+2. I'm feeding in a webi tcpdump via forward.py and it makes sound for much more than the 20s that was captured. so we're not processing all the bundle fast enough. This is a problem for forward.py offline at least, but it may also completely skew everything in realtime mode too. probably we need to buffer and package things in bundles by packet size and/or a fixed latency.
+
+cli opts for latency, gain, duration
+turn on/off events
+time dilation
+emergency limiter to avoid hearing damage
+dynamic latency
+
+when jack goes away, exit or maybe reconnect when it comes back
+a gui
+select envelopes by OSC (the docs are a lie currently)
+more envelopes
+is socat nodelay good enough? probably (with sufficient latency)
