@@ -11,6 +11,7 @@ very natural indeed when conveyed aurally.
 - [jack](http://jackaudio.org/)
 - [liblo](http://liblo.sourceforge.net/)
 - [libsndfile](http://www.mega-nerd.com/libsndfile/)
+- [ØMQ](http://zeromq.org/)
 
 ## Grains
 Make >100ms wav files and put them in `wavs/`.
