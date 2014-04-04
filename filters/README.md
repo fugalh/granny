@@ -3,6 +3,9 @@
     tcpdump -l ... | ./tcpdumped.sh $event | ./forward.py
     ngrep -lt -W single ... | ./ngrepped.sh [$event] | ./forward.py
 
+# Requirements
+- [pyOSC](https://gitorious.org/pyosc)
+
 # Details
 This is a collection of useful scripts for generating granny events.
 

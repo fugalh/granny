@@ -20,7 +20,7 @@ Good source material might include sounds from your favorite softsynth,
 snippets from your favorite song(s) or movies, recordings of random strangers
 at the train station...
 
-Grais will be generated from these source files, with random start times and
+Grains will be generated from these source files, with random start times and
 with a duration and window as requested.
 
 ## Events
