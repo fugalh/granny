@@ -16,7 +16,7 @@ if len(sys.argv) > 2:
     port = int(sys.argv[2])
 gran = granny.Client((host, 1337))
 
-first = None
+offset = None
 now = time.time()
 while True:
     # Can't do "for line in sys.stdin" because of buffering
@@ -39,20 +39,21 @@ while True:
             micros = 0
             if '.' in when:
                 when, micros = when.split('.', 1)
+                micros = int((micros + "0"*6)[:6])
 
             # ngrep uses slashes. tsk tsk
             when = when.replace('/', '-')
 
             when = time.mktime(time.strptime(when, "%Y-%m-%d %H:%M:%S"))
-            when += float(micros) / 1e6
+            when += micros / 1e6
 
             # Time shift so that the first event aligns with now
-            if first is None:
+            if offset is None:
                 if when < now:
-                    first = now - when
+                    offset = now - when
                 else:
-                    first = 0
-            when += first
+                    offset = 0
+            when += offset
 
         gran.send(what, when)
 
